@@ -13,6 +13,8 @@ namespace GenresApp.Models
 
         public string Descriotion { get; set; }
 
+        public bool HasParent { get; set; }
+
         public List<SubGenre> SubGenres { get; set; }
     }
 }

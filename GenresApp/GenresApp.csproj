@@ -7,6 +7,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200912094949_Genres.cs" />
     <Compile Remove="Migrations\20200912094949_Genres.Designer.cs" />
+    <Compile Remove="Migrations\20200912095413_Genres.cs" />
+    <Compile Remove="Migrations\20200912095413_Genres.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -10,10 +10,6 @@ namespace GenresApp.Data
         {
         }
 
-        public DbSet<Genre> Genre { get; set; }
-
-
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -23,7 +19,9 @@ namespace GenresApp.Data
 
 
 
-        public DbSet<GenresApp.Models.SubGenre> SubGenre { get; set; }
+        public DbSet<SubGenre> SubGenre { get; set; }
+
+        public DbSet<Genre> Genre { get; set; }
 
     }
 

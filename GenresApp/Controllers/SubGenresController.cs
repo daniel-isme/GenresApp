@@ -10,22 +10,23 @@ using GenresApp.Models;
 
 namespace GenresApp.Controllers
 {
-    public class GenresController : Controller
+    public class SubGenresController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public GenresController(ApplicationDbContext context)
+        public SubGenresController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Genres
+        // GET: SubGenres
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Genre.Where(g => !g.HasParent).ToListAsync());
+            var applicationDbContext = _context.SubGenre.Include(s => s.Parent);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Genres/Details/5
+        // GET: SubGenres/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -33,43 +34,21 @@ namespace GenresApp.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genre
+            var subGenre = await _context.SubGenre
+                .Include(s => s.Parent)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (genre == null)
+            if (subGenre == null)
             {
                 return NotFound();
             }
 
-            genre.SubGenres = _context.SubGenre.Where(x => x.ParentId == genre.Id).ToList();
+            subGenre.SubGenres = _context.SubGenre.Where(x => x.ParentId == subGenre.Id).Select(g => g).ToList();
 
-            return View(genre);
+            return View(subGenre);
         }
 
-        // GET: Genres/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Genres/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Descriotion")] Genre genre)
-        {
-            if (ModelState.IsValid)
-            {
-                genre.Id = Guid.NewGuid();
-                _context.Add(genre);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(genre);
-        }
-
-        // GET: Genres/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        // GET: SubGenres/Create
+        public async Task<IActionResult> Create(Guid? id)
         {
             if (id == null)
             {
@@ -81,17 +60,53 @@ namespace GenresApp.Controllers
             {
                 return NotFound();
             }
-            return View(genre);
+
+            return View(new SubGenre() { Parent = genre, ParentId = genre.Id});
         }
 
-        // POST: Genres/Edit/5
+        // POST: SubGenres/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Descriotion")] Genre genre)
+        public async Task<IActionResult> Create([Bind("ParentId,Id,Name,Descriotion")] SubGenre subGenre)
         {
-            if (id != genre.Id)
+            if (ModelState.IsValid)
+            {
+                subGenre.Id = Guid.NewGuid();
+                _context.Add(subGenre);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Genres");
+            }
+            ViewData["ParentId"] = new SelectList(_context.Genre, "Id", "Name", subGenre.ParentId);
+            return View(subGenre);
+        }
+
+        // GET: SubGenres/Edit/5
+        public async Task<IActionResult> Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var subGenre = await _context.SubGenre.FindAsync(id);
+            if (subGenre == null)
+            {
+                return NotFound();
+            }
+            ViewData["ParentId"] = new SelectList(_context.Genre, "Id", "Name", subGenre.ParentId);
+            return View(subGenre);
+        }
+
+        // POST: SubGenres/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, [Bind("ParentId,Id,Name,Descriotion")] SubGenre subGenre)
+        {
+            if (id != subGenre.Id)
             {
                 return NotFound();
             }
@@ -100,12 +115,12 @@ namespace GenresApp.Controllers
             {
                 try
                 {
-                    _context.Update(genre);
+                    _context.Update(subGenre);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GenreExists(genre.Id))
+                    if (!SubGenreExists(subGenre.Id))
                     {
                         return NotFound();
                     }
@@ -116,10 +131,11 @@ namespace GenresApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(genre);
+            ViewData["ParentId"] = new SelectList(_context.Genre, "Id", "Name", subGenre.ParentId);
+            return View(subGenre);
         }
 
-        // GET: Genres/Delete/5
+        // GET: SubGenres/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -127,30 +143,31 @@ namespace GenresApp.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genre
+            var subGenre = await _context.SubGenre
+                .Include(s => s.Parent)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (genre == null)
+            if (subGenre == null)
             {
                 return NotFound();
             }
 
-            return View(genre);
+            return View(subGenre);
         }
 
-        // POST: Genres/Delete/5
+        // POST: SubGenres/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var genre = await _context.Genre.FindAsync(id);
-            _context.Genre.Remove(genre);
+            var subGenre = await _context.SubGenre.FindAsync(id);
+            _context.SubGenre.Remove(subGenre);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GenreExists(Guid id)
+        private bool SubGenreExists(Guid id)
         {
-            return _context.Genre.Any(e => e.Id == id);
+            return _context.SubGenre.Any(e => e.Id == id);
         }
     }
 }

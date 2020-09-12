@@ -7,6 +7,11 @@ namespace GenresApp.Models
 {
     public class SubGenre : Genre
     {
+        public SubGenre()
+        {
+            HasParent = true;
+        }
+
         public Guid ParentId { get; set; }
 
         public Genre Parent { get; set; }

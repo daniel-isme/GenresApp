@@ -14,6 +14,7 @@ namespace GenresApp.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Descriotion = table.Column<string>(nullable: true),
+                    HasParent = table.Column<bool>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
                     ParentId = table.Column<Guid>(nullable: true),
                     GenreId = table.Column<Guid>(nullable: true)
