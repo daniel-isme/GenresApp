@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using GenresApp.Models;
 
 namespace GenresApp.Data
 {
@@ -8,6 +9,7 @@ namespace GenresApp.Data
             : base(options)
         {
         }
+        public DbSet<GenresApp.Models.Genre> Genre { get; set; }
     }
 
 }
