@@ -10,11 +10,30 @@ namespace GenresApp.Services
     {
         private readonly List<Genre> genres = new List<Genre>();
 
-        public Genre GetGenre(Guid id)
+        public List<Genre> GetAllGenres()
+        {
+            return genres;
+        }
+
+        public Genre GetGenreById(Guid? id)
         {
             var genre = genres.FirstOrDefault(g => g.Id == id);
 
             return genre;
+        }
+
+        public List<Genre> GetAllSubGenresByGenreId(Guid? id)
+        {
+            var genre = GetGenreById(id);
+            List<Genre> subGenres = new List<Genre>();
+
+            foreach (var subGenreId in genre.SubGenreIds)
+            {
+                var subGenre = GetGenreById(subGenreId);
+                subGenres.Add(subGenre);
+            }
+
+            return subGenres;
         }
 
         public void AddGenre(Genre newGenre)
@@ -22,15 +41,21 @@ namespace GenresApp.Services
             genres.Add(newGenre);
         }
 
-        public void SetSubGenreToGenre(Guid subGenreId, Guid genreId)
+        public void SetSubGenreToGenre(Guid subGenreId, Guid? genreId)
         {
+            if (genreId == null)
+                return;
+
             var genre = genres.FirstOrDefault(g => g.Id == genreId);
 
             genre.SubGenreIds.Add(subGenreId);
         }
 
-        public void AddSubGenreToGenre(Genre subGenre, Guid genreId)
+        public void AddSubGenreToGenre(Genre subGenre, Guid? genreId)
         {
+            if (genreId == null)
+                return;
+
             genres.Add(subGenre);
 
             SetSubGenreToGenre(subGenre.Id, genreId);

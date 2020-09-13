@@ -8,9 +8,11 @@ namespace GenresApp.Services
 {
     public interface IGenresService
     {
-        public Genre GetGenre(Guid id);
+        public List<Genre> GetAllSubGenresByGenreId(Guid? id);
+        public List<Genre> GetAllGenres();
+        public Genre GetGenreById(Guid? id);
         public void AddGenre(Genre newGenre);
-        public void SetSubGenreToGenre(Guid subGenreId, Guid genreId);
-        public void AddSubGenreToGenre(Genre subGenre, Guid genreId);
+        public void SetSubGenreToGenre(Guid subGenreId, Guid? genreId);
+        public void AddSubGenreToGenre(Genre subGenre, Guid? genreId);
     }
 }

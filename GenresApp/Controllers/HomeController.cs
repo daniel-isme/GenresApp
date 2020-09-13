@@ -20,7 +20,7 @@ namespace GenresApp.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Genres");
         }
 
         public IActionResult Privacy()
